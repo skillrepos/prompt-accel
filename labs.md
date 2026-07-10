@@ -2,7 +2,7 @@
 ## Mastering the Techniques, Patterns, and Strategies Behind High-Performance AI Prompting
  
 ## Session labs 
-## Revision 6.2 - 07/09/26
+## Revision 6.3 - 07/10/26
  
 ## How to Use These Labs
  
@@ -690,22 +690,45 @@ This is a prompt gap. The SYSTEM prompt has no rule telling the agent to verify 
  
 <br><br>
  
-**Step 5 — Fix the prompt.** Edit the SYSTEM prompt in `agent.py` to add a validation rule. Add this as a new rule in the CRITICAL RULES section:
+**Step 5 — Fix the prompt (two parts).** You might expect that adding a single "don't do that" rule will fix this — but a lone rule buried at the bottom of the prompt often isn't enough, especially for a small model like `granite4:3b`. Look at why: the prompt shows the model **two worked examples that both produce coordinates and call the tool**, and **zero examples of refusing**. One rule can't outweigh two demonstrations. And a rule like "if you're *not confident* the city is real…" depends on the model doubting itself — but a small model is perfectly confident that "Atlantis" is a real place, so the rule never fires. It then falls back to coordinates `0, 0` ("null island" in the Atlantic), which returns a real forecast — so nothing even looks made up.
+ 
+So we fix it the way prompt engineers actually do: **show the behavior we want with an example, then reinforce it with a rule.**
+ 
+**(a) Add a refusal example.** In the SYSTEM prompt, right after the `Final:` example for London, add:
  
 ```
-If the user asks for a city you are not confident is a real, existing city, respond with Final: saying you cannot find that city. Do NOT guess coordinates.
+Example of a place that is not a real city:
+Thought: Atlantis is a mythical location with no real coordinates, so I cannot look up its weather.
+Final: I can't find a real city called "Atlantis", so I can't provide a weather forecast.
+```
+
+![Fixing prompt](./images/prompt-accel26.png?raw=true "Fixing prompt")
+ 
+**(b) Add a rule to the CRITICAL RULES section.** This version doesn't rely on the model's self-confidence and explicitly blocks the `0, 0` escape hatch:
+ 
+```
+If the location is fictional, mythical, or not a real city on Earth, or you do not know its real coordinates, do NOT call get_weather and do NOT use 0,0 — respond immediately with Final: saying you cannot find that city.
 ```
  
-![Fixing prompt](./images/prompt-accel10.png?raw=true "Fixing prompt")
+The example does the heavy lifting (small models copy patterns they can see); the rule generalizes it beyond that one case.
+ 
+![Fixing prompt](./images/prompt-accel27.png?raw=true "Fixing prompt")
  
 <br><br>
  
-**Step 6 - Retry.** Save the file (Cmd/Ctrl+S), use "exit" to stop the running agent, then run the agent again. Put in "Atlantis," and verify it now refuses instead of hallucinating coordinates. 
+**Step 6 - Retry, then test that it generalizes.** Save the file (Cmd/Ctrl+S), use "exit" to stop the running agent, then run the agent again.
  
+First enter **Atlantis** — it should now refuse instead of hallucinating coordinates, because your example covers it directly.
  
-![Fixed prompt](./images/prompt-accel11.png?raw=true "Fixed prompt")
+But refusing Atlantis alone doesn't prove much: the model may just be echoing the example. The real test is a fictional place the prompt has **never seen**. Exit, run again, and enter **Rivendell** (or try **Gotham**, **Mordor**, or **Narnia**). If the agent refuses these too, your example + rule actually taught the *pattern* ("refuse places that aren't real cities"), not just the word "Atlantis."
+ 
+Finally, make sure you didn't over-correct: enter a real city like **Reykjavik** — it should still return a normal forecast. A guardrail that refuses everything is as broken as one that refuses nothing.
+ 
+![Fixed prompt](./images/prompt-accel28.png?raw=true "Fixed prompt")
  
 You just changed agent behavior by editing text — no code changes.
+ 
+**A note on reliability:** on a small model like `granite4:3b`, don't be surprised if it *occasionally* still slips and forecasts an unseen fictional city. That's the real lesson — prompt guardrails are **probabilistic, not guarantees**. Stronger models follow the rule more reliably; weaker models need the example, and even then aren't perfect. In production you'd back the prompt rule with code: validate the city against a real geocoding service *before* ever calling the weather tool, so a prompt slip can't reach the outside world.
  
 <br><br>
  
@@ -715,13 +738,13 @@ You just changed agent behavior by editing text — no code changes.
 Always include a brief travel tip for the location in your final answer.
 ```
  
-![Fixed prompt](./images/prompt-accel12.png?raw=true "Fixed prompt")
+![Fixed prompt](./images/prompt-accel29.png?raw=true "Fixed prompt")
  
 <br><br>
  
 **Step 8 - Run again.** Exit the agent if still running. Then run it again and enter any city. Does the final answer now include a travel tip? If it does, the prompt change worked. If not, try making the instruction more specific (e.g., "After the weather summary, add one sentence starting with 'Travel tip:'").
  
-![Fixed prompt](./images/prompt-accel13.png?raw=true "Fixed prompt")
+![Fixed prompt](./images/prompt-accel30.png?raw=true "Fixed prompt")
  
  
 The key lesson: you changed the agent's behavior — added capabilities and fixed bugs — by editing **only the SYSTEM prompt text**. You never modified a line of Python. The prompt is the control layer for AI agents.
