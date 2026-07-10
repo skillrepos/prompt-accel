@@ -24,6 +24,7 @@ Labs 5-6 are designed to be done in the codespace environment. **Setup:** Follow
 ---
  
 <br>
+
 ## Lab 1: Creating Strong Prompts 
  
 **Goal**: Apply the 6 building blocks (Task, Context, Role, Format, Examples, Constraints) to transform vague prompts into structured, measurable ones.
@@ -140,6 +141,7 @@ This is measuring **consistency** — a key quality metric.
 ---
  
 <br>
+
 ## Lab 2: Few-Shot & Chain of Thought Comparison 
  
 **Goal**: Compare zero-shot, few-shot, and Chain of Thought (CoT) prompting on a classification task where the "correct" answer depends on company-specific rules that the AI can't infer on its own.
@@ -323,6 +325,7 @@ Key takeaway: CoT improves *how* the AI reasons but can't teach it rules it does
 ---
  
 <br>
+
 ## Lab 3: Production Prompt Engineering 
  
 **Goal**: Build a structured, constrained prompt that produces consistent, machine-parseable JSON output suitable for feeding into a real system.
@@ -477,6 +480,7 @@ Notice the refinement: "For trivial fixes, 1 sentence is acceptable" — that's 
 ---
  
 <br>
+
 ## Lab 4: Multi-Expert & Reverse Prompting 
  
 **Goal**: Use multi-expert prompting to get diverse perspectives on a complex decision, then use reverse prompting to discover hidden requirements.
@@ -627,6 +631,7 @@ Notice the two additions: the **incentive frame** at the top ("This will inform 
 ---
  
 <br>
+
 ## Lab 5: Prompting for an AI Agent 
  
 **Goal**: See how the system prompt controls a real AI agent's behavior, then modify it to change that behavior — without touching any code.
@@ -738,6 +743,7 @@ These are the same prompt engineering concepts from Labs 1-4 (role, constraints,
 ---
  
 <br>
+
 ## Lab 6: Working with Prompts in MCP
  
 **Goal**: Learn how MCP (Model Context Protocol) separates prompt design from agent code — so you can update prompts on a server without touching the agents that use them.
