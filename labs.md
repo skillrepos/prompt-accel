@@ -884,11 +884,11 @@ def action_items_prompt(text: str) -> dict:
     return result
 ```
  
-![Additional prompt resource](./images/prompt-accel19.png?raw=true "Additional prompt resource")
+![Additional prompt resource](./images/prompt-accel31.png?raw=true "Additional prompt resource")
  
 <br><br>
  
-**Step 8 - Add the tool stub.** Scroll down to around line 68. Then add the matching tool stub so the client can invoke it (follow the pattern of the existing tool functions):
+**Step 8 - Add the tool stub.** Scroll down to around line 82. Then add the matching tool stub so the client can invoke it (follow the pattern of the existing tool functions):
  
 ```python
 @server.tool("action_items")
@@ -898,7 +898,7 @@ def action_items_tool(text: str) -> str:
     return text
 ```
  
-![Additional tool stub](./images/prompt-accel20.png?raw=true "Additional tool stub")
+![Additional tool stub](./images/prompt-accel32.png?raw=true "Additional tool stub")
  
 <br><br>
  
