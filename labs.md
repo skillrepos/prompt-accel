@@ -2,7 +2,7 @@
 ## Mastering the Techniques, Patterns, and Strategies Behind High-Performance AI Prompting
  
 ## Session labs 
-## Revision 6.3 - 07/10/26
+## Revision 6.3 - 07/16/26
  
 ## How to Use These Labs
  
@@ -902,7 +902,7 @@ def action_items_tool(text: str) -> str:
  
 <br><br>
  
-**Step 9 - Run again.** Save the file. Restart both the server and client. Choose the function `action_items`. Test by pasting a paragraph of meeting notes as in the sample below or make some up.
+**Step 9 - Run again.** Save the file. **Restart both the server and client.** Choose the function `action_items`. Test by pasting a paragraph of meeting notes as in the sample below or make some up.
  
 ```
 action_items
