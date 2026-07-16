@@ -720,7 +720,7 @@ The example does the heavy lifting (small models copy patterns they can see); th
  
 First enter **Atlantis** — it should now refuse instead of hallucinating coordinates, because your example covers it directly.
  
-But refusing Atlantis alone doesn't prove much: the model may just be echoing the example. The real test is a fictional place the prompt has **never seen**. Exit, run again, and enter **Rivendell** (or try **Gotham**, **Mordor**, or **Narnia**). If the agent refuses these too, your example + rule actually taught the *pattern* ("refuse places that aren't real cities"), not just the word "Atlantis."
+But refusing Atlantis alone doesn't prove much: the model may just be echoing the example. The real test is a fictional place the prompt has **never seen**. Exit, run again, and enter **Rivendell** (or try **Mordor**, or **Narnia**). If the agent refuses these too, your example + rule actually taught the *pattern* ("refuse places that aren't real cities"), not just the word "Atlantis."
  
 Finally, make sure you didn't over-correct: enter a real city like **Reykjavik** — it should still return a normal forecast. A guardrail that refuses everything is as broken as one that refuses nothing.
  
