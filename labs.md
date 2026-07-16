@@ -774,7 +774,21 @@ These are the same prompt engineering concepts from Labs 1-4 (role, constraints,
 **What you'll learn**: How to create, modify, and parameterize prompt resources on an MCP server, and why this separation matters for managing AI at scale.
  
 **Setup**: This lab uses two terminals in the Codespace — one for the MCP server, one for the client agent. The code is pre-built; you'll only edit prompt text on the server side.
- 
+
+### Background — what this MCP server actually does
+
+Before running anything, here's what you're working with, so the steps make sense.
+
+An **MCP server** publishes capabilities that any connected client can discover and use at runtime. This lab's server (`mcp_server.py`) is a small **prompt server**: its whole job is to host a handful of reusable prompt templates and hand them out on request. It registers three **prompt resources**, each a named prompt template with a `{text}` slot where your input gets inserted:
+
+- **`summarize`** — wraps your text in an instruction that tells the model to summarize it (out of the box: "summarize the following text in one sentence").
+- **`reword`** — asks the model to restate your text in clearer, simpler language.
+- **`expand`** — asks the model to add detail and explanation to your text.
+
+It also registers a matching **tool** stub for each name (here the tools just echo the input, so you can watch the request/response flow), and a small **resource** that tells the client which model to use (`granite4:3b`).
+
+The key idea: the actual prompt engineering — the instruction that turns your raw text into a summary, a rewording, or an expansion — lives **on the server** as a named, reusable template. The client never contains that wording. It just asks the server "what do you offer?", lets you pick one by name (like `summarize`), and sends your text. So when a step below tells you to enter `summarize`, you're choosing one of these three server-side prompts and feeding it your text.
+
 ### Steps
  
 <br>
@@ -792,15 +806,16 @@ python mcp_server.py
 ```
 python mcp_client_agent.py
 ```
- 
-Watch the startup — the client automatically **discovers** the available prompts and tools from the server. It doesn't have these built in; it asks the server what's available. This is MCP's discovery mechanism.
- 
+
+Watch the startup — the client automatically **discovers** the available prompts and tools from the server. It doesn't have these built in; it asks the server what's available, and the server answers with the three prompts from the Background above (`summarize`, `reword`, `expand`). This is MCP's discovery mechanism: the client learns its options at runtime instead of hardcoding them.
+
 <br><br>
- 
-**Step 3 — Test the "summarize" prompt.** When the client prompts you, enter `summarize` as the tool. Then paste some text (a paragraph from any article, or make something up). Watch both terminals:
+
+**Step 3 — Test the "summarize" prompt.** Of the three discovered prompts, we'll start with `summarize` — it takes whatever text you give it and returns a condensed version (by default, a one-sentence summary). When the client prompts you, enter `summarize` as the tool, then paste some text (a paragraph from any article, or make something up). Watch both terminals:
 - The **client** sends your text to the server
-- The **server** applies its summarize prompt template to your text
-- The result flows back to the client
+- The **server** wraps your text in its `summarize` prompt template and returns the finished prompt
+- The result flows back to the client and is run through the model
+
 ```
 summarize
 ```
