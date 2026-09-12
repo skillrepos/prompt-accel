@@ -2,7 +2,7 @@
 ## Mastering the Techniques, Patterns, and Strategies Behind High-Performance AI Prompting
  
 ## Session labs 
-## Revision 6.4 - 09/12/26
+## Revision 6.5 - 09/12/26
  
 ## How to Use These Labs
  
@@ -153,7 +153,7 @@ This is measuring **consistency** — a key quality metric.
 ### Steps
  
 <br>
-**Step 1 — Predict, then test.** Read this ticket carefully:
+**Step 1 — Predict, then test.** Read this ticket:
  
 > "Hey, just wanted to let you know that Competitor X released a feature similar to your dashboard. I'm still happy with your product, but thought you'd want to know!"
  
@@ -171,7 +171,7 @@ Were you right about the AI's answer? This seems low-priority — the customer i
  
 <br><br>
  
-**Step 2 — Batch classify.** Now let's have the AI assess 5 tickets at once to build a zero-shot baseline:
+**Step 2 — Batch classify.** Classify 5 tickets at once to build a zero-shot baseline:
  
 ```
 You are a support ticket classifier. Assign exactly one priority level to each ticket: P1-Critical, P2-High, P3-Medium, or P4-Low.
@@ -189,7 +189,7 @@ Ticket 4: "None of our 25-person team can access the platform since 8 AM. We hav
 Ticket 5: "I was charged $45 twice this month. Can someone look into this?"
 ```
  
-Look at the results. The AI will classify based on **general industry norms**. But this company's actual rules are very different.
+Look at the results. The AI classifies based on **general industry norms** — this company's actual rules are very different.
  
 <br><br>
  
@@ -229,7 +229,7 @@ Ticket 4: "None of our 25-person team can access the platform since 8 AM. We hav
 Ticket 5: "I was charged $45 twice this month. Can someone look into this?"
 ```
  
-Compare to zero-shot. You'll likely find CoT produces **the same classifications** — and that's the key insight. The reasoning is now *visible* (you can read exactly how the AI thought through each ticket), but the answers don't improve. Why? Because the errors aren't caused by sloppy thinking — they're caused by **missing domain knowledge**. The AI reasons perfectly well about blast radius and business impact, but it has no way to know that this company treats competitor mentions as P1 or that single-user data loss is only P3 because of automated backups. CoT makes the reasoning auditable, which is great for debugging — but structured thinking can't substitute for information the model doesn't have.
+Compare to zero-shot. You'll likely find CoT produces **the same classifications** — the reasoning is now *visible*, but the answers don't improve. The errors aren't sloppy thinking; they're **missing domain knowledge**. The AI reasons fine about blast radius and business impact, but it has no way to know this company treats competitor mentions as P1, or that single-user data loss is only P3 because of automated backups.
  
 <br><br>
  
@@ -277,11 +277,11 @@ Ticket 4: "None of our 25-person team can access the platform since 8 AM. We hav
 Ticket 5: "I was charged $45 twice this month. Can someone look into this?"
 ```
  
-Compare all three tables. Few-shot should nail all 5 — the examples directly taught the counterintuitive rules that neither zero-shot nor CoT could figure out. This is the payoff: examples don't just improve reasoning, they **transfer knowledge** the model couldn't access otherwise.
+Compare all three tables. Few-shot should nail all 5 — the examples directly taught the counterintuitive rules that neither zero-shot nor CoT could figure out. Examples don't just improve reasoning, they **transfer knowledge** the model couldn't access otherwise.
  
 <br><br>
  
-**Step 6 — Identify the pattern.** Look at your zero-shot, CoT, and few-shot results together. Notice that zero-shot and CoT likely produced the same classifications — the only difference is CoT shows its work. For each ticket, consider: what reasoning did CoT reveal, and why didn't that reasoning lead to the correct answer? What did the few-shot examples provide that structured thinking alone couldn't?
+**Step 6 — Identify the pattern.** Put your zero-shot, CoT, and few-shot results side by side. For each ticket, ask: what reasoning did CoT reveal, and why didn't it lead to the right answer? What did the few-shot examples provide that structured thinking alone couldn't?
  
 <br><br>
  
@@ -297,7 +297,7 @@ Compare all three tables. Few-shot should nail all 5 — the examples directly t
  
 <br><br>
  
-You should see: zero-shot (~2/5), CoT (~2/5 — same answers, but with visible reasoning), few-shot (5/5). The takeaway: CoT adds **auditability** (you can see *why* the AI chose each priority), but it doesn't add **accuracy** when the problem is missing domain knowledge. Only few-shot — which transfers the company's actual rules through examples — closes the gap.
+You should see: zero-shot (~2/5), CoT (~2/5 — same answers, but with visible reasoning), few-shot (5/5). CoT adds **auditability**, but not **accuracy** when the problem is missing domain knowledge. Only few-shot — which transfers the company's actual rules through examples — closes the gap.
  
 <br><br>
  
@@ -315,7 +315,7 @@ Which technique handled your adversarial ticket best?
  
 <br><br>
  
-Key takeaway: CoT improves *how* the AI reasons but can't teach it rules it doesn't know. Few-shot teaches domain knowledge directly through examples. In production, combine both: few-shot examples to teach the rules, plus CoT to make every decision auditable. The AI "knows" standard industry practices — but it can't know *your* company's unique priorities unless you teach it.
+Key takeaway: CoT improves *how* the AI reasons but can't teach it rules it doesn't know — it "knows" standard industry practice, not *your* company's unique priorities. Few-shot teaches those directly through examples. In production, combine both: few-shot to teach the rules, plus CoT to make every decision auditable.
  
 <br><br>
  
@@ -349,14 +349,14 @@ Look at what you got. It's probably readable — maybe bullet points, maybe a ni
  
 <br><br>
  
-**Step 2 — Try to parse it.** Imagine writing code to process this output automatically. For each entry, you'd need to extract: a title, a change type (feature/bugfix/improvement), a description, which product areas are affected, and whether users need to do anything. Try to answer these questions:
+**Step 2 — Try to parse it.** For each entry, a script would need to extract: a title, a change type (feature/bugfix/improvement), a description, which product areas are affected, and whether users need to do anything. Try to answer these questions:
  
 - Is there a consistent, predictable structure a script could rely on?
 - Could you extract the change type programmatically, or is it buried in prose?
 - Are affected product areas listed in a standard way, or described differently each time?
 - Is "user action required" explicitly stated, or would a script have to guess from context?
 - If you ran this prompt 10 times, would the format be identical every time?
-The output is fine for a human reader — but it's not **machine-parseable**. That's the production gap. Think about the reasons a script could struggle with this output.
+The output is fine for a human reader — but it's not **machine-parseable**. That's the production gap.
  
 <br><br>
  
@@ -390,7 +390,7 @@ Constraints:
 - type must reflect: new capability = feature, enhancement = improvement, fix = bugfix, requires migration = breaking_change
 ```
  
-Compare this output to your Step 1 results. Notice the difference: Step 1 produced human-readable prose; this produces machine-parseable JSON with controlled values. Run this constrained prompt 2-3 times in separate conversations — the output should be structurally identical every time. How does your schema from Step 3 compare to this reference?
+Compare this output to your Step 1 results. Run this constrained prompt 2-3 times in separate conversations — the output should be structurally identical every time. How does your schema from Step 3 compare to this reference?
  
 <br><br>
  
@@ -408,7 +408,7 @@ These are the extremes: a complex breaking change with multiple impacts, and a t
 - Did it correctly classify the JWT migration as "breaking_change" with user_action_required: true?
 - Did it provide useful migration details (not just repeat the description)?
 - Did it handle the typo gracefully — or did it inflate a one-line fix into a multi-sentence description to meet the "2-3 sentences" rule?
-That last point is minor in this example, but could be more significant in others: constraints that work for normal entries can create awkward results at the extremes. Think about any rules that need adjusting.
+That last point is minor here but matters more elsewhere: constraints that work for normal entries can create awkward results at the extremes. Think about any rules that need adjusting.
  
 <br><br>
  
@@ -424,7 +424,7 @@ Review all 5 changelog entries you generated. For each one, check against these 
 6. details is null when user_action_required is false?
 ```
  
-Did the AI catch issues it introduced? This is a powerful production pattern: you can build validation directly into your prompts so the AI checks itself before returning results.
+Did the AI catch issues it introduced? You can build validation directly into your prompts, so the AI checks itself before returning results.
  
 <br><br>
  
@@ -462,7 +462,7 @@ Notice the refinement: "For trivial fixes, 1 sentence is acceptable" — that's 
  
 <br><br>
  
-**Step 8 — Review the combined output.** Did the single production prompt produce clean results for all 5 entries — including the edge cases? Did self-validation catch anything? Compare this to the multi-step process from Steps 4-6. In production, one well-designed prompt replaces the iterative testing you did in this lab.
+**Step 8 — Review the combined output.** Did the single production prompt produce clean results for all 5 entries — including the edge cases? Did self-validation catch anything? Compare this to the multi-step process from Steps 4-6.
  
 <br><br>
  
@@ -470,7 +470,7 @@ Notice the refinement: "For trivial fixes, 1 sentence is acceptable" — that's 
  
 <br><br>
  
-**Step 10 — Reflect.** You built three layers of prompt quality: schema (structure), constraints (quality control), and self-validation (built-in error checking). The schema solves "can a script read this?" Constraints solve "will the data be reliable?" Self-validation solves "will it catch its own mistakes?" In production, all three go into one prompt — and you stress-test with edge cases before deploying.
+**Step 10 — Reflect.** You built three layers: schema, constraints, and self-validation. The schema solves "can a script read this?" Constraints solve "will the data be reliable?" Self-validation solves "will it catch its own mistakes?" In production, all three go into one prompt — and you stress-test with edge cases before deploying.
  
 <br><br>
  
@@ -496,11 +496,11 @@ Notice the refinement: "For trivial fixes, 1 sentence is acceptable" — that's 
 Should our company adopt a 4-day work week? Give your recommendation.
 ```
  
-Read the response. It's probably balanced and well-written. Now ask yourself: **could you actually make a decision based on this?** Look for specifics — does it give you a financial estimate of the cost? A concrete legal risk? A specific metric you could track? Note how many *actionable details* (numbers, named risks, specific recommendations) it includes.
+Read the response. It's probably balanced and well-written. Now ask yourself: **could you actually make a decision based on this?** Look for specifics — does it give you a financial estimate of the cost? A concrete legal risk? A specific metric you could track? Note how many *actionable details* it includes.
  
 <br><br>
  
-**Step 2 — Design your own expert panel.** Before looking ahead, think about this question: *Which 3-4 expert roles would give you the most useful range of perspectives on the 4-day work week decision?*
+**Step 2 — Design your own expert panel.** Before looking ahead: *Which 3-4 expert roles would give you the most useful range of perspectives on the 4-day work week decision?*
  
 Write down your panel (just the role names and what each should focus on), as in this kind of pattern:
  
@@ -542,7 +542,7 @@ After all 4 experts present, provide:
 - The single most important factor the decision hinges on
 ```
  
-Now note the actionable details again — financial estimates, named legal risks, specific metrics, concrete recommendations. Were there significantly more or less that the panel surfaced compared to Step 1? The difference isn't just more perspectives — it's that each expert is forced to provide *specifics* rather than hedged generalities.
+Now count the actionable details again. Did the panel surface more than Step 1? The difference isn't just more perspectives — it's that each expert is forced to provide *specifics* rather than hedged generalities.
  
 <br><br>
  
@@ -587,7 +587,7 @@ Ask your first question now. After I answer, ask the next one. After 4-5 questio
  
 <br><br>
  
-**Step 9 — Add self-critique and framing.** Two more techniques can strengthen any analysis. Start a new conversation and paste this template — it combines multi-round self-critique with audience framing:
+**Step 9 — Add self-critique and framing.** Start a new conversation and paste this template — it combines multi-round self-critique with audience framing:
  
 ```
 [INCENTIVE FRAME]
@@ -613,7 +613,7 @@ Present as structured sections with clear headers.
 Keep total response under 500 words.
 ```
  
-Notice the two additions: the **incentive frame** at the top ("This will inform a critical decision for...") signals high stakes and encourages thoroughness. The **multi-round structure** forces the AI to critique its own initial assessment before committing. Together, these produce more nuanced analysis than a single-pass prompt. Try editing the stakeholder (e.g., "the board of directors" vs. "a junior manager") — does the depth change?
+Notice the two additions: the **incentive frame** at the top signals high stakes, and the **multi-round structure** forces the AI to critique its own initial assessment before committing. Try editing the stakeholder (e.g., "the board of directors" vs. "a junior manager") — does the depth change?
  
 <br><br>
  
@@ -638,7 +638,7 @@ Notice the two additions: the **incentive frame** at the top ("This will inform 
  
 **What you'll learn**: How agent prompts differ from chat prompts, and how editing a system prompt changes autonomous AI behavior in real time.
  
-**Setup**: Open the GitHub Codespace for this lab. The weather agent is pre-built and working — you'll only edit the prompt text inside the code, never the code itself.
+**Setup**: Open the GitHub Codespace for this lab. The weather agent is pre-built and working — you'll only edit prompt text, never the code itself.
  
 ### Steps
  
@@ -651,7 +651,7 @@ python agent.py
  
 When prompted, enter: **Paris, France**
  
-Watch the output carefully. You'll see a loop: the agent **Thinks** (reasons about what to do), takes an **Action** (calls a weather tool), receives an **Observation** (the tool's result), then produces a **Final Answer**. This is the ReAct loop (Reason + Act) — Thought → Action → Observation, sometimes called TAO. Note the exact format of the tool call — the agent outputs `Action:` and `Args:` on specific lines.
+Watch the output. You'll see the ReAct/TAO loop: the agent **Thinks**, takes an **Action** (calls a weather tool), receives an **Observation** (the tool's result), then produces a **Final Answer**. Note the exact format of the tool call — the agent outputs `Action:` and `Args:` on specific lines.
  
 ![initial run](./images/prompt-accel5.png?raw=true "initial run")
  
@@ -661,7 +661,7 @@ Watch the output carefully. You'll see a loop: the agent **Thinks** (reasons abo
 - **Tool definition**: Where does it describe the `get_weather` tool and its parameters?
 - **Format rules**: Where does it specify the Thought/Action/Args/Observation format?
 - **Critical rules**: Where does it tell the agent when to STOP and wait?
-Don't modify anything yet — just map the sections.
+Don't modify anything yet.
  
 ```
 code agent.py
@@ -675,13 +675,13 @@ code agent.py
 - The agent reasoned before acting → which line?
 - The tool call used a specific format (Action/Args) → which line?
 - The agent waited for the tool result before continuing → which line?
-This is the key insight: every behavior you saw came from a line in the prompt. The Python code is just plumbing — the prompt is the control layer.
+Every behavior you saw came from a line in the prompt — the Python code is just plumbing.
  
 <br><br>
  
 **Step 4 — Test a fictional city.** If not already running, start the agent again. Then enter: **Atlantis**
  
-The agent has no geocoding tool — it converts city names to latitude/longitude coordinates by itself. Watch what happens: it will **make up coordinates** for Atlantis, call `get_weather` with those fake coordinates, and confidently report real weather data for some random spot on Earth. It didn't refuse, didn't say "I'm not sure Atlantis exists" — it hallucinated coordinates and presented the result as fact.
+The agent has no geocoding tool — it converts city names to latitude/longitude coordinates by itself. It will **make up coordinates** for Atlantis, call `get_weather` with those fake coordinates, and confidently report real weather data for some random spot on Earth.
  
  
 ![Fictitious city](./images/prompt-accel9.png?raw=true "Fictitious city")
@@ -690,7 +690,7 @@ This is a prompt gap. The SYSTEM prompt has no rule telling the agent to verify 
  
 <br><br>
  
-**Step 5 — Fix the prompt (two parts).** You might expect that adding a single "don't do that" rule will fix this — but a lone rule buried at the bottom of the prompt often isn't enough, especially for a small model like `granite4:3b`. Look at why: the prompt shows the model **two worked examples that both produce coordinates and call the tool**, and **zero examples of refusing**. One rule can't outweigh two demonstrations. And a rule like "if you're *not confident* the city is real…" depends on the model doubting itself — but a small model is perfectly confident that "Atlantis" is a real place, so the rule never fires. It then falls back to coordinates `0, 0` ("null island" in the Atlantic), which returns a real forecast — so nothing even looks made up.
+**Step 5 — Fix the prompt (two parts).** You might expect a single "don't do that" rule to fix this — but a lone rule buried at the bottom often isn't enough, especially for a small model like `granite4:3b`. Here's why: the prompt shows the model **two worked examples that both produce coordinates and call the tool**, and **zero examples of refusing**. One rule can't outweigh two demonstrations. And a rule like "if you're *not confident* the city is real…" depends on the model doubting itself — but a small model is perfectly confident that "Atlantis" is a real place, so the rule never fires. It then falls back to coordinates `0, 0` ("null island" in the Atlantic), which returns a real forecast — so nothing even looks made up.
  
 So we fix it the way prompt engineers actually do: **show the behavior we want with an example, then reinforce it with a rule.**
  
@@ -718,15 +718,13 @@ The example does the heavy lifting (small models copy patterns they can see); th
  
 **Step 6 - Retry, then test that it generalizes.** Save the file (Cmd/Ctrl+S), use "exit" to stop the running agent, then run the agent again.
  
-First enter **Atlantis** — it should now refuse instead of hallucinating coordinates, because your example covers it directly.
+First enter **Atlantis** — it should now refuse instead of hallucinating coordinates.
  
 But refusing Atlantis alone doesn't prove much: the model may just be echoing the example. The real test is a fictional place the prompt has **never seen**. Exit, run again, and enter **Rivendell** (or try **Mordor**, or **Narnia**). If the agent refuses these too, your example + rule actually taught the *pattern* ("refuse places that aren't real cities"), not just the word "Atlantis."
  
 Finally, make sure you didn't over-correct: enter a real city like **Reykjavik** — it should still return a normal forecast. A guardrail that refuses everything is as broken as one that refuses nothing.
  
 ![Fixed prompt](./images/prompt-accel28.png?raw=true "Fixed prompt")
- 
-You just changed agent behavior by editing text — no code changes.
  
 **A note on reliability:** on a small model like `granite4:3b`, don't be surprised if it *occasionally* still slips and forecasts an unseen fictional city. That's the real lesson — prompt guardrails are **probabilistic, not guarantees**. Stronger models follow the rule more reliably; weaker models need the example, and even then aren't perfect. In production you'd back the prompt rule with code: validate the city against a real geocoding service *before* ever calling the weather tool, so a prompt slip can't reach the outside world.
  
@@ -742,12 +740,12 @@ Always include a brief travel tip for the location in your final answer.
  
 <br><br>
  
-**Step 8 - Run again.** Exit the agent if still running. Then run it again and enter any city. Does the final answer now include a travel tip? If it does, the prompt change worked. If not, try making the instruction more specific (e.g., "After the weather summary, add one sentence starting with 'Travel tip:'").
+**Step 8 - Run again.** Exit the agent if still running. Then run it again and enter any city. Does the final answer now include a travel tip? If not, try making the instruction more specific (e.g., "After the weather summary, add one sentence starting with 'Travel tip:'").
  
 ![Fixed prompt](./images/prompt-accel30.png?raw=true "Fixed prompt")
  
  
-The key lesson: you changed the agent's behavior — added capabilities and fixed bugs — by editing **only the SYSTEM prompt text**. You never modified a line of Python. The prompt is the control layer for AI agents.
+The key lesson: you added capabilities and fixed bugs by editing **only the SYSTEM prompt text** — never a line of Python. The prompt is the control layer for AI agents.
  
 <br><br>
  
@@ -777,17 +775,13 @@ These are the same prompt engineering concepts from Labs 1-4 (role, constraints,
 
 ### Background — what this MCP server actually does
 
-Before running anything, here's what you're working with, so the steps make sense.
+This lab's server (`mcp_server.py`) is a small **prompt server**. It registers three **prompt resources** — named templates, each with a `{text}` slot where your input gets inserted:
 
-An **MCP server** publishes capabilities that any connected client can discover and use at runtime. This lab's server (`mcp_server.py`) is a small **prompt server**: its whole job is to host a handful of reusable prompt templates and hand them out on request. It registers three **prompt resources**, each a named prompt template with a `{text}` slot where your input gets inserted:
-
-- **`summarize`** — wraps your text in an instruction that tells the model to summarize it (out of the box: "summarize the following text in one sentence").
+- **`summarize`** — summarizes your text (out of the box: "summarize the following text in one sentence").
 - **`reword`** — asks the model to restate your text in clearer, simpler language.
 - **`expand`** — asks the model to add detail and explanation to your text.
 
 It also registers a matching **tool** stub for each name (here the tools just echo the input, so you can watch the request/response flow), and a small **resource** that tells the client which model to use (`granite4:3b`).
-
-The key idea: the actual prompt engineering — the instruction that turns your raw text into a summary, a rewording, or an expansion — lives **on the server** as a named, reusable template. The client never contains that wording. It just asks the server "what do you offer?", lets you pick one by name (like `summarize`), and sends your text. So when a step below tells you to enter `summarize`, you're choosing one of these three server-side prompts and feeding it your text.
 
 ### Steps
  
@@ -807,11 +801,11 @@ python mcp_server.py
 python mcp_client_agent.py
 ```
 
-Watch the startup — the client automatically **discovers** the available prompts and tools from the server. It doesn't have these built in; it asks the server what's available, and the server answers with the three prompts from the Background above (`summarize`, `reword`, `expand`). This is MCP's discovery mechanism: the client learns its options at runtime instead of hardcoding them.
+Watch the startup — the client automatically **discovers** the available prompts and tools from the server rather than having them built in.
 
 <br><br>
 
-**Step 3 — Test the "summarize" prompt.** Of the three discovered prompts, we'll start with `summarize` — it takes whatever text you give it and returns a condensed version (by default, a one-sentence summary). When the client prompts you, enter `summarize` as the tool, then paste some text (a paragraph from any article, or make something up). Watch both terminals:
+**Step 3 — Test the "summarize" prompt.** When the client prompts you, enter `summarize` as the tool, then paste some text (a paragraph from any article, or make something up). Watch both terminals:
 - The **client** sends your text to the server
 - The **server** wraps your text in its `summarize` prompt template and returns the finished prompt
 - The result flows back to the client and is run through the model
@@ -832,15 +826,13 @@ The prompt that controlled the summarization lives on the **server**, not in the
  
 <br><br>
  
-**Step 4 — Read the server's prompt code.** Open `mcp_server.py` in the editor. Find the function decorated with `@server.prompt("summarize")`. Inside, you'll see a prompt template with a `{text}` placeholder. This is the **prompt resource** — it's defined and managed on the server, and any agent that connects to this server can use it.
- 
-Notice the structure: the decorator names the prompt, the function returns the template, and `{text}` is where the user's input gets inserted.
+**Step 4 — Read the server's prompt code.** Open `mcp_server.py` in the editor. Find the function decorated with `@server.prompt("summarize")`. Inside, you'll see the prompt template with its `{text}` placeholder — this is the **prompt resource**.
  
 ![Prompt template](./images/prompt-accel16.png?raw=true "Prompt template")
  
 <br><br>
  
-**Step 5 — Modify a prompt.** Change the `prompt_summarize` function in `mcp_server.py` so its template is more specific. Replace the existing function body with the version below (this keeps the same `dict`-returning pattern the other prompts use — only the instruction text changes):
+**Step 5 — Modify a prompt.** Make the `summarize` template more specific — replace the `prompt_summarize` function body in `mcp_server.py` with the version below (this keeps the same `dict`-returning pattern the other prompts use — only the instruction text changes):
  
 ```python
 @server.prompt("summarize")
@@ -873,11 +865,7 @@ Did the output change? You changed the agent's behavior by editing the **server*
  
 <br><br>
  
-This shows the MCP advantage: the prompt lives on the server, not in the agent. In Lab 5, the prompt was embedded in the agent's code. Here, it's a **resource** that can be updated independently. Imagine 10 different agents all using this server's "summarize" prompt — you update it in one place, and all 10 agents get the new behavior instantly.
- 
-<br><br>
- 
-**Step 7 — Create a new prompt resource.** Add a new prompt to the server. The existing prompts are `summarize`, `reword`, and `expand` — all general text transformations. You'll add `action_items`, which extracts to-do items from text.
+**Step 7 — Create a new prompt resource.** You'll add `action_items`, which extracts to-do items from text.
  
 First, add the prompt resource in `mcp_server.py`:
  
@@ -932,7 +920,7 @@ We agreed to launch the beta by Friday. Sarah will update the docs and Mike need
  
 <br><br>
  
-**Step 10 — Connect back to prompt engineering.** Look at the prompts you've written on the MCP server. They use the same techniques from earlier labs:
+**Step 10 — Connect back to prompt engineering.** The prompts you've written on the server use the same techniques from earlier labs:
 - **Role**: "You are a technical writer" (Lab 1 building block)
 - **Constraints**: "exactly 2 bullet points", "starting with a verb" (Lab 3 production techniques)
 - **Format**: "actionable takeaways", "bullet point" (Lab 3 structured outputs)
@@ -943,7 +931,7 @@ MCP doesn't replace prompt engineering — it gives your prompts a standard way 
 **Step 11 — Reflect.** You've now seen two levels of prompt engineering for AI systems:
 - **Lab 5**: System prompts that control a single agent's behavior. The prompt is embedded in the agent code. To change behavior, you edit the agent's file.
 - **Lab 6**: MCP prompt resources that live on a server. Multiple agents can discover and use them. To change behavior, you edit the server — agents pick up the change automatically.
-Both use the same prompt techniques you learned in Labs 1-4. The difference is **where the prompt lives and who controls it**. As AI systems grow from a single agent to many agents working together, MCP's separation of prompts from agents becomes essential.
+The difference is **where the prompt lives and who controls it** — and that matters more as you go from one agent to many.
  
 Consider which of these two approaches (embedded prompt vs. MCP resource) would work better for your team's AI workflows, and why.
 <br><br>
