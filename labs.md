@@ -2,7 +2,7 @@
 ## Mastering the Techniques, Patterns, and Strategies Behind High-Performance AI Prompting
  
 ## Session labs 
-## Revision 6.3 - 07/16/26
+## Revision 6.4 - 09/12/26
  
 ## How to Use These Labs
  

@@ -11,5 +11,5 @@ source ./$PYTHON_ENV/bin/activate
 if [ -f "./requirements.txt" ]; then
   pip3 install -r "./requirements.txt"
 else
-  pip3 install -r "/workspaces/ai-3in1/requirements/requirements.txt"
+  pip3 install -r "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/requirements.txt"
 fi

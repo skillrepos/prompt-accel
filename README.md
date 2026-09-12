@@ -36,3 +36,14 @@ You can either open it in a separate browser instance or open it in the codespac
 **Now, you are ready for the labs!**
 
 
+## Troubleshooting
+
+- **Lab 6: `python mcp_server.py` fails with `ModuleNotFoundError: No module named 'mcp.server.fastmcp'`** — your codespace was created before the `fastmcp` version pin was added and installed FastMCP 4.x. Fix it in place with:
+
+```
+pip uninstall -y fastmcp fastmcp-slim mcp && pip install "fastmcp>=2.13.0,<3"
+```
+
+  Then re-run `python mcp_server.py`. (The uninstall matters: installing over the top leaves 4.x files behind that break `mcp_client_agent.py` even after the server starts.) Codespaces created from the current repo do not hit this.
+
+- **Labs 5-6: the first model call is slow** — `granite4:3b` is loading. Later calls in the same session are fast.

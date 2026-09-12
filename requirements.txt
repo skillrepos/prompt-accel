@@ -1,4 +1,4 @@
-fastmcp>=2.13.0
+fastmcp>=2.13.0,<3
 pydantic>=2.11.7,<3.0.0
 openai==1.93.0
 requests==2.32.4
