@@ -2,7 +2,7 @@
 ## Mastering the Techniques, Patterns, and Strategies Behind High-Performance AI Prompting
  
 ## Session labs 
-## Revision 6.5 - 09/12/26
+## Revision 6.7 - 09/12/26
  
 ## How to Use These Labs
  
@@ -679,12 +679,12 @@ Every behavior you saw came from a line in the prompt — the Python code is jus
  
 <br><br>
  
-**Step 4 — Test a fictional city.** If not already running, start the agent again. Then enter: **Atlantis**
+**Step 4 — Test a fictional city.** If not already running, start the agent again. Then enter: **Narnia Island**
  
-The agent has no geocoding tool — it converts city names to latitude/longitude coordinates by itself. It will **make up coordinates** for Atlantis, call `get_weather` with those fake coordinates, and confidently report real weather data for some random spot on Earth.
+The agent has no geocoding tool — it converts city names to latitude/longitude coordinates by itself. It will **make up coordinates** for Narnia Island, call `get_weather` with those fake coordinates, and confidently report real weather data for some random spot on Earth.
  
  
-![Fictitious city](./images/prompt-accel9.png?raw=true "Fictitious city")
+![Fictitious city](./images/prompt-accel33.png?raw=true "Fictitious city")
  
 This is a prompt gap. The SYSTEM prompt has no rule telling the agent to verify a city is real before looking up its weather.
  
@@ -698,11 +698,11 @@ So we fix it the way prompt engineers actually do: **show the behavior we want w
  
 ```
 Example of a place that is not a real city:
-Thought: Atlantis is a mythical location with no real coordinates, so I cannot look up its weather.
-Final: I can't find a real city called "Atlantis", so I can't provide a weather forecast.
+Thought: Narnia Island is a mythical location with no real coordinates, so I cannot look up its weather.
+Final: I can't find a real city called "Narnia Island", so I can't provide a weather forecast.
 ```
 
-![Fixing prompt](./images/prompt-accel26.png?raw=true "Fixing prompt")
+![Fixing prompt](./images/prompt-accel34.png?raw=true "Fixing prompt")
  
 **(b) Add a rule to the CRITICAL RULES section.** This version doesn't rely on the model's self-confidence and explicitly blocks the `0, 0` escape hatch:
  
@@ -712,7 +712,7 @@ If the location is fictional, mythical, or not a real city on Earth, or you do n
  
 The example does the heavy lifting (small models copy patterns they can see); the rule generalizes it beyond that one case.
  
-![Fixing prompt](./images/prompt-accel27.png?raw=true "Fixing prompt")
+![Fixing prompt](./images/prompt-accel35.png?raw=true "Fixing prompt")
  
 <br><br>
  
@@ -720,7 +720,7 @@ The example does the heavy lifting (small models copy patterns they can see); th
  
 First enter **Atlantis** — it should now refuse instead of hallucinating coordinates.
  
-But refusing Atlantis alone doesn't prove much: the model may just be echoing the example. The real test is a fictional place the prompt has **never seen**. Exit, run again, and enter **Rivendell** (or try **Mordor**, or **Narnia**). If the agent refuses these too, your example + rule actually taught the *pattern* ("refuse places that aren't real cities"), not just the word "Atlantis."
+But refusing Narnia Island alone doesn't prove much: the model may just be echoing the example. The real test is a fictional place the prompt has **never seen**. Exit, run again, and enter a fictitious place like **Rivendell** (or try **Mordor**). If the agent refuses these too, your example + rule actually taught the *pattern* ("refuse places that aren't real cities"), not just the word "Atlantis."
  
 Finally, make sure you didn't over-correct: enter a real city like **Reykjavik** — it should still return a normal forecast. A guardrail that refuses everything is as broken as one that refuses nothing.
  
